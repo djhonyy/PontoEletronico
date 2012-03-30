@@ -65,8 +65,10 @@ Ponto = {
                 )
             .insertBefore($('#Ponto'));
 
-            // escondo o botão de ponto caso hoje não seja um dia de trabalho
-            // setado nas configurações do usuário
+            /**
+             * E scondo o botão de ponto caso hoje não seja um dia de trabalho
+             * setado nas configurações do usuário
+             */
             var arrDiasTrabalho = sessionStorage.getItem('dias_trabalho').split(',');
             var objData = new Date();
 
@@ -74,10 +76,22 @@ Ponto = {
                 $('header nav ul li:eq(0)').hide();
             }
 
+            // mostro o relatório (tela principal)
             Ponto.relatorio();
         } else {
+            // primeiro vejo se o navegador tem suporte a web storage
+            try {
+                Ponto._getConnection();
+            } catch (err) {
+                Ponto._showErro(err);
+                
+                return false;
+            }
+            
+            // crio a estrutura de banco necessária para a app
             Ponto._instala();
-
+                
+            // exibo a caixa de login de usuário
             Ponto.login();
         }
     },
@@ -88,20 +102,18 @@ Ponto = {
     _getConnection: function() {
         try {
             if (window.openDatabase) {
-                var db = openDatabase("Ponto2", "0.2", "Ponto Eletrônico", 200000);
+                var db = openDatabase("Ponto", "0.1", "Ponto Eletrônico", 200000);
 
                 if (!db) {
-                    alert("Erro criando banco de dados, por favor, teste um navegador compatível.");
-
-                    return false;
+                    throw "Erro criando banco de dados, por favor, teste um navegador compatível.";
                 }
 
                 return db;
             } else {
-                throw "Não foi possível utilizar a base de dados, navegador incompatível.";
+                throw "Não foi possível conectar a base de dados, navegador incompatível.";
             }
         } catch(err) {
-            console.log(err);
+            throw err;
         }
     },
 
@@ -113,52 +125,45 @@ Ponto = {
         try {
             // crio as bases
             Ponto._getConnection().transaction(function(tx) {
-                var sql = "CREATE TABLE IF NOT EXISTS usuarios ("
-                                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                + "owner INTEGER NULL DEFAULT 1, "
-                                + "login CHAR(32) NOT NULL UNIQUE, "
-                                + "password CHAR(120) NOT NULL); ";
+                var sql;
+                
+                sql = "CREATE TABLE IF NOT EXISTS usuarios ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "owner INTEGER NULL DEFAULT 1, "
+                    + "login CHAR(32) NOT NULL UNIQUE, "
+                    + "password CHAR(120) NOT NULL); ";
 
                 tx.executeSql(sql);
-            });
-            Ponto._getConnection().transaction(function(tx) {
-                var sql = "CREATE TABLE IF NOT EXISTS preferencias ("
-                                + "usuario_id INTEGER NOT NULL UNIQUE, "
-                                + "horas_dia INTEGER DEFAULT (4), "
-                                + "horas_almoco INTEGER DEFAULT (1), "
-                                + "nome TEXT NOT NULL,  email TEXT, "
-                                + "dias_trabalho TEXT);";;
-
-                tx.executeSql(sql);
-            });
-            Ponto._getConnection().transaction(function(tx) {
-                var sql = "CREATE TABLE IF NOT EXISTS ponto ("
-                                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                + "usuario_id INTEGER NOT NULL, "
-                                + "entrada DATETIME NOT NULL, "
-                                + "saida DATETIME, "
-                                + "obs TEXT);";
-
-                tx.executeSql(sql);
-            });
-
-            // crio a trigger necessária para manter a base sempre limpa
-            Ponto._getConnection().transaction(function(tx) {
-                var sql = "CREATE TRIGGER delete_usuarios DELETE ON usuarios "
-                        + "BEGIN "
-                        + "     DELETE FROM preferencias WHERE usuario_id = old.id;"
-                        + "     DELETE FROM ponto WHERE usuario_id = old.id;"
-                        + "END;";
-
-                tx.executeSql(sql);
-            });
             
-            // mando criar um usuário
-            Ponto._getConnection().transaction(function(tx) {
-                var sql = "SELECT COUNT(id) AS total FROM usuarios";
+                sql = "CREATE TABLE IF NOT EXISTS preferencias ("
+                    + "usuario_id INTEGER NOT NULL UNIQUE, "
+                    + "horas_dia INTEGER DEFAULT (4), "
+                    + "horas_almoco INTEGER DEFAULT (1), "
+                    + "nome TEXT NOT NULL,  email TEXT, "
+                    + "dias_trabalho TEXT);";;
 
-                tx.executeSql(sql, [],
-                function(tx, result) {
+                tx.executeSql(sql);
+
+                sql = "CREATE TABLE IF NOT EXISTS ponto ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "usuario_id INTEGER NOT NULL, "
+                    + "entrada DATETIME NOT NULL, "
+                    + "saida DATETIME, "
+                    + "obs TEXT);";
+
+                tx.executeSql(sql);
+            
+                sql = "CREATE TRIGGER delete_usuarios DELETE ON usuarios "
+                    + "BEGIN "
+                    + "     DELETE FROM preferencias WHERE usuario_id = old.id;"
+                    + "     DELETE FROM ponto WHERE usuario_id = old.id;"
+                    + "END;";
+
+                tx.executeSql(sql);
+            
+                sql = "SELECT COUNT(id) AS total FROM usuarios";
+
+                tx.executeSql(sql, [], function(tx, result) {
                     if (result.rows.item(0).total == 0) {
                         var usuario = new Object;
                             usuario.id      = 1;
@@ -173,9 +178,6 @@ Ponto = {
                         Ponto._criaSessao(usuario);
                         Ponto.init();
                     }
-                },
-                function(tx, error) {
-                    console.log(error);
                 });
             });
         } catch(err) {
@@ -438,8 +440,7 @@ Ponto = {
                     }
 
                     Ponto._criaSessao(objUsuario);
-
-                    window.location.reload();
+                    Ponto.init();
                 },
                 "Fechar": function() {
                     $(this).dialog('close');
@@ -609,8 +610,7 @@ Ponto = {
                             function(tx, result) {
                                 if (result.rows.length > 0) {
                                     Ponto._criaSessao(result.rows.item(0));
-
-                                    window.parent.location.reload();
+                                    Ponto.init();
                                 } else {
                                     Ponto._showErro('Login inválido.');
                                 }
@@ -655,12 +655,12 @@ Ponto = {
 
                         sessionStorage.removeItem('inicial');
 
-                        window.location.reload();
+                        Ponto.init();
                     },
                     "Logout": function() {
                         sessionStorage.clear();
 
-                        window.location.reload();
+                        Ponto.init();
                     },
                     "Cancelar": function() {
                         $(this).dialog('close');
@@ -682,7 +682,7 @@ Ponto = {
                     "Continuar": function() {
                         sessionStorage.clear();
 
-                        window.location.reload();
+                        Ponto.init();
                     },
                     "Cancelar": function() {
                         $(this).dialog('close');
@@ -1164,7 +1164,7 @@ Ponto = {
 
                         for (var i = 0; i < results; i++) {
                             var usuario = result.rows.item(i);
-                            var $linha  = $('<tr/>').attr('id', 'usuario_' + usuario.id).appendTo($('#tbUsuarios tbody'));
+                            var $linha  = $('<tr/>').attr('id', 'linha_' + usuario.id).appendTo($('#tbUsuarios tbody'));
 
                             $linha.append($('<td/>').addClass('id').append($('<input/>').attr('type', 'checkbox').attr('name', 'usuario[]').attr('id', 'usuario_' + usuario.id).val(usuario.id)))
                                   .append($('<td/>').addClass('login').html(usuario.login).click(function() {Ponto._trocaUsuario(usuario);}))
@@ -1435,7 +1435,7 @@ Ponto = {
                                                         tx.executeSql(sql, [e],
                                                         function(tx, result) {
                                                             //Ponto._showMsg('Usuário removido.');
-                                                            $('#tbUsuarios tbody #usuario_' + e).hide();
+                                                            $('#tbUsuarios tbody #linha_' + e).hide();
                                                         },
                                                         function(tx, error) {
                                                             //Ponto._showErro('Erro apagando usuário(s).');
