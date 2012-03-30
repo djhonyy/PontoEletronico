@@ -1,0 +1,361 @@
+/*
+    Created on : May 23, 2011, 5:57:26 PM
+    Author     : Thiago Paes <mrprompt@gmail.com>
+    Description:
+        Definição de layout do ponto eletrônico
+        Reset by html5doctor.com - v1.4 - 2009-07-27
+        Richard Clark - http://richclarkdesign.com
+*/
+/* --- reset */
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, dialog, figure, footer, header,
+hgroup, menu, nav, section,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+body {
+    line-height:1;
+    font:75%/1.5em Arial, Helvetica, "Liberation sans", "Bitstream Vera Sans", sans-serif;
+}
+article, aside, dialog, figure, footer, header,
+hgroup, nav, section {
+    display:block;
+}
+nav ul {
+    list-style:none;
+}
+blockquote, q {
+    quotes:none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+a {
+    margin:0;
+    padding:0;
+    border:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+mark {
+    background-color:#ff9;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+del {
+    text-decoration: line-through;
+}
+abbr[title], dfn[title] {
+    border-bottom:1px dotted #000;
+    cursor:help;
+}
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+hr {
+    display:block;
+    height:1px;
+    border:0;
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+input, select {
+    vertical-align:middle;
+}
+/* --- /reset */
+
+/* classes */
+.tinyTip {
+    width: 325px;
+    padding: 17px 0px 0px 0px;
+    display: block;
+    background: url(../img/tinyTip-top.png) 0px 0px no-repeat;
+}
+.tinyTip .content {
+    padding: 0px 15px 0px 15px;
+    font-size: 14px;
+    font-family: "Lucida Sans Unicode";
+    color: #010101;
+    background: url(../img/tinyTip-content.png) 0px 0px repeat-y;
+}
+.tinyTip .bottom {
+    height: 47px;
+    background: url(../img/tinyTip-bottom.png) 0px 0px no-repeat;
+    font: 0px/0px sans-serif;
+}
+/* --- /classes */
+
+/* --- sessões */
+body {
+    width: 570px;
+    margin: 0 auto;
+}
+noscript {
+    display: block;
+    width: 450px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
+    -moz-box-shadow: 0 2px 3px rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.2);
+    background-color: #fcefa1;
+    border: 1px solid #909090;
+    padding: 10px;
+    text-align: center;
+    font-size: 18pt;
+    line-height: 20pt;
+    margin: 10pt auto;
+}
+header {
+    margin-bottom:5px;
+    margin-top: 10px;
+}
+header nav {
+    display: block;
+    height: 32px;
+}
+nav ul {
+    list-style:none;
+    display: inline-block;
+    float: left;
+}
+nav ul li {
+    display: inline-block;
+}
+nav b {
+    text-transform: capitalize;
+    display: block;
+    float: right;
+}
+nav .ui-button {
+    margin-right: 4pt;
+}
+/* --- /sessões */
+
+/* --- login */
+#login-form label {
+    display: block;
+}
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 160px;
+}
+#login-form input[type="text"] {
+    margin-left: 10px;
+}
+#login-form input[type="password"] {
+    margin-left: 20px;
+}
+/* --- /login */
+
+/* --- cadastro */
+#cadastro-form label {
+    display: block;
+    vertical-align: bottom;
+}
+#cadastro-form input[type="text"],
+#cadastro-form input[type="password"] {
+    width: 160px;
+    vertical-align: bottom;
+}
+#cadastro-form input#nome {
+    margin-left: 20px;
+}
+#cadastro-form input#usuario {
+    margin-left: 22px;
+}
+#cadastro-form input#email {
+    margin-left: 15px;
+}
+#cadastro-form input#senha {
+    margin-left: 20px;
+}
+#cadastro-form input#senha_confirmacao {
+    margin-left: 18px;
+}
+#cadastro-form input#horas_dia {
+    width: 25px;
+    margin-left: 10px;
+    text-align: center;
+}
+#cadastro-form input#horas_almoco {
+    width: 25px;
+    margin-left: 39px;
+    text-align: center;
+}
+#cadastro-form fieldset fieldset {
+    border: 1px solid #DDD;
+    margin-top: 4px;
+}
+#cadastro-form fieldset fieldset label {
+    display: inline-block;
+    margin: 3px;
+    text-align: center;
+    color: #909090;
+}
+#cadastro-form fieldset fieldset label input {
+    display: block;
+}
+/* --- /cadastro */
+
+/* --- relatório */
+#datepicker {
+    display: block;
+    position: relative;
+    left: 335px;
+    top: 7px;
+}
+.graph {
+    display: block;
+    position: relative;
+    left: 332px;
+    top: 15px;
+    margin-bottom: 10px;
+}
+.widget-relatorio {
+    display: block;
+    position: absolute;
+    top: 53px;
+    width: auto;
+    text-align: center;
+    padding: 2px;
+}
+.widget-relatorio table {
+    display: block;
+}
+.widget-relatorio table .data {
+    width: 77px;
+}
+.widget-relatorio table .entrada {
+    width: 75px;
+}
+.widget-relatorio table .saida {
+    width: 75px;
+}
+.widget-relatorio table .horas {
+    width: 75px;
+}
+.widget-relatorio table thead {
+    margin-bottom: 2px;
+}
+.widget-relatorio table thead tr th {
+    padding: 2px;
+}
+.widget-relatorio table tbody tr:hover {
+    background-color: #F2F2F2;
+}
+.widget-relatorio table tbody tr.comObs {
+    background-color: #DDD;
+}
+.widget-relatorio table tbody tr.expedienteMenor {
+    background-color: #FFDADA;
+}
+.widget-relatorio table tbody tr td {
+    padding: 2px;
+    border: 1px solid #F2F2F2;
+    border-collapse: collapse;
+}
+.widget-relatorio table tbody tr td.noResult {
+    text-align: center;
+    border-style: none;
+    display: block;
+    width: 316px;
+}
+/* --- /relatório */
+
+/* --- bater o ponto */
+#ponto-form label {
+    display: block;
+    vertical-align: top;
+    width: 100%;
+}
+#ponto-form textarea {
+    border: 1px solid #DDD;
+    width: 320px;
+    height: 5em;
+    clear: both;
+    display: block;
+    margin-bottom: 5px;
+}
+#ponto-form .radioContainer input[type="radio"] {
+    vertical-align: top;
+}
+#ponto-form .radioContainer:last-Child input[type="radio"] {
+    margin-left: 19px;
+}
+/* --- /bater ponto */
+
+/* --- preferências */
+.widget-preferencias input#nome,
+.widget-preferencias input#email,
+.widget-preferencias input#senha,
+.widget-preferencias input#senha_confirmacao {
+    width: 233px !important;
+}
+/* --- /preferências */
+
+/* --- lista de usuário */
+.widget-usuarios table {
+    display: block;
+    text-align: left;
+    width: 100%;
+}
+.widget-usuarios table thead tr th {
+    padding: 2px;
+    border-collapse: collapse;
+    width: 25%;
+}
+.widget-usuarios table tbody tr:hover {
+    background-color: #F2F2F2;
+}
+.widget-usuarios table tbody tr td {
+    padding: 4px;
+    border: 1px solid #F2F2F2;
+    border-collapse: collapse;
+    width: 25%;
+}
+.widget-usuarios table tbody tr:first-child td {
+    border-style: none;
+}
+.widget-usuarios table tbody tr td.id {
+    width: 20px;
+}
+.widget-usuarios table tbody tr td.login,
+.widget-usuarios table tbody tr td.nome {
+    cursor: pointer;
+}
+.widget-usuarios table tbody tr td.expediente {
+    text-align: center;
+}
+.widget-usuarios .noResult {
+    text-align: center;
+    border-style: none;
+    display: block;
+}
+/* --- /lista de usuário */
