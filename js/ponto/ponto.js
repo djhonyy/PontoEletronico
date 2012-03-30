@@ -20,9 +20,9 @@ Ponto = {
      * Cria o ambiente
      */
     init: function() {
-        $('<section/>')
-        .attr('id', 'Ponto')
-        .appendTo($('body'));
+        $('body').empty();
+        
+        $('<section/>').attr('id', 'Ponto').appendTo($('body'));
 
         if (sessionStorage.getItem('id') !== null) {
             $('<header/>')
@@ -88,7 +88,7 @@ Ponto = {
     _getConnection: function() {
         try {
             if (window.openDatabase) {
-                var db = openDatabase("Ponto", "0.1", "Ponto Eletrônico", 200000);
+                var db = openDatabase("Ponto2", "0.2", "Ponto Eletrônico", 200000);
 
                 if (!db) {
                     alert("Erro criando banco de dados, por favor, teste um navegador compatível.");
@@ -98,7 +98,7 @@ Ponto = {
 
                 return db;
             } else {
-                throw "Couldn't open the database.";
+                throw "Não foi possível utilizar a base de dados, navegador incompatível.";
             }
         } catch(err) {
             console.log(err);
@@ -171,8 +171,7 @@ Ponto = {
                             usuario.dias_trabalho   = '1,2,3,4,5';
                             
                         Ponto._criaSessao(usuario);
-                        
-                        window.parent.location.reload();
+                        Ponto.init();
                     }
                 },
                 function(tx, error) {
@@ -1060,7 +1059,7 @@ Ponto = {
                                     sessionStorage.setItem('horas_dia', $('#cadastro-form form #horas_dia').val());
                                     sessionStorage.setItem('dias_trabalho', $lista.join(','));
 
-                                    window.parent.location.reload();
+                                    Ponto.init();
                                 }
                             });
                         });
@@ -1165,13 +1164,13 @@ Ponto = {
 
                         for (var i = 0; i < results; i++) {
                             var usuario = result.rows.item(i);
-                            var $linha  = $('<tr/>').appendTo($('#tbUsuarios tbody'));
+                            var $linha  = $('<tr/>').attr('id', 'usuario_' + usuario.id).appendTo($('#tbUsuarios tbody'));
 
                             $linha.append($('<td/>').addClass('id').append($('<input/>').attr('type', 'checkbox').attr('name', 'usuario[]').attr('id', 'usuario_' + usuario.id).val(usuario.id)))
-                                .append($('<td/>').addClass('login').html(usuario.login).click(function() {Ponto._trocaUsuario(usuario);}))
-                                .append($('<td/>').addClass('nome').html(usuario.nome).click(function() {Ponto._trocaUsuario(usuario);}))
-                                .append($('<td/>').addClass('email').html(usuario.email))
-                                .append($('<td/>').addClass('expediente').html(usuario.horas_dia + ' / ' + usuario.horas_almoco));
+                                  .append($('<td/>').addClass('login').html(usuario.login).click(function() {Ponto._trocaUsuario(usuario);}))
+                                  .append($('<td/>').addClass('nome').html(usuario.nome).click(function() {Ponto._trocaUsuario(usuario);}))
+                                  .append($('<td/>').addClass('email').html(usuario.email))
+                                  .append($('<td/>').addClass('expediente').html(usuario.horas_dia + ' / ' + usuario.horas_almoco));
                         }
                     } else {
                         // sem sub usuários
@@ -1365,7 +1364,8 @@ Ponto = {
                                                                                 if (result.rowsAffected == 1) {
                                                                                     $(this).dialog('close');
                                                                                     
-                                                                                    Ponto._showMsg('Usuário cadastrado com sucesso.');
+                                                                                    Ponto.init();
+                                                                                    Ponto.usuarios();
                                                                                 }
                                                                             });
                                                                         });
@@ -1428,18 +1428,17 @@ Ponto = {
                                             "Continuar": function() {
                                                 $(this).dialog('close');
 
-                                                $('#apagar-form').remove();
-
                                                 $($lista).each(function(i, e) {
                                                     Ponto._getConnection().transaction(function(tx) {
                                                         var sql = "DELETE FROM usuarios WHERE id = ?";
                                                         
                                                         tx.executeSql(sql, [e],
                                                         function(tx, result) {
-                                                            Ponto._showMsg('Usuário removido.');
+                                                            //Ponto._showMsg('Usuário removido.');
+                                                            $('#tbUsuarios tbody #usuario_' + e).hide();
                                                         },
                                                         function(tx, error) {
-                                                            Ponto._showErro('Erro apagando usuário(s).');
+                                                            //Ponto._showErro('Erro apagando usuário(s).');
                                                         });
                                                     });
                                                 });
